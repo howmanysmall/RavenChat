@@ -4,7 +4,7 @@
 -- Designed to work even if ClearGuiOnRespawn is Enabled
 
 -- Config (Client)
-local AnimationTime = .25
+local AnimationTime = 0.25
 local AnimationEase = "Quart"
 local BarSize = UDim2.new(1, 0, 0, 30)
 local BarPosition = UDim2.new(0, 16, 1, -30)
@@ -14,7 +14,7 @@ local FontSize = 16
 local TextBoxOffset = 16
 local TextColor3 = Color3.new(1, 1, 1)
 local TextStrokeColor3 = Color3.new(0, 0, 0)
-local TextStrokeTransparency = .7
+local TextStrokeTransparency = 0.7
 
 -- Services
 local Players = game:GetService("Players")
@@ -29,7 +29,7 @@ local DestroyFirstChild = Nevermore:GetModule("DestroyFirstChild")
 local RavenChat = Nevermore:GetEvent("RavenChat")
 
 -- Chat Obect
-local Chat = {}
+local Chat = { }
 local isServer = RunService:IsServer()
 local isClient = RunService:IsClient()
 
@@ -39,18 +39,18 @@ if isServer then
 
 	-- Module Data
 	local JoinOptions = {
-		" joined";
-		" entered";
-		" has arrived";
-		" showed up!";
-		" has entered the building!";
-		" in the house!";
-		" is here :D";
+		" joined",
+		" entered",
+		" has arrived",
+		" showed up!",
+		" has entered the building!",
+		" in the house!",
+		" is here :D"
 	}
 
 	-- Optimizations
 	local NumJoinOptions = #JoinOptions
-	local random = math.random
+	local math = math local random = math.random
 	local FireClient = RavenChat.FireClient
 	local FireAllClients = RavenChat.FireAllClients
 	local FilterStringAsync = not isClient and GameChat.FilterStringAsync or function(_, a) return a end
@@ -111,7 +111,7 @@ if isClient then
 	local LocalPlayer = Players.LocalPlayer
 	local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 
-	local Tween = {IsRunning = false}
+	local Tween = { IsRunning = false }
 	Tween.__index = Tween
 
 	function Tween:Stop()
@@ -126,10 +126,7 @@ if isClient then
 		local EasingFunction = Easing[Function]
 		local ElapsedTime = 0
 
-		local self = setmetatable({
-			StartTime = ElapsedTime;
-			IsRunning = true;
-		}, Tween)
+		local self = setmetatable({ StartTime = ElapsedTime, IsRunning = true }, Tween)
 
 		self.Connection = Render:Connect(function(step)
 			if Duration > ElapsedTime then
@@ -148,13 +145,13 @@ if isClient then
 	local Screen = Instance.new("ScreenGui")
 
 	-- ChatBar
-	local ButtonClipper = Instance.new("Frame", Screen)
-	local Button = Instance.new("TextButton", ButtonClipper)
-	local TextBar = Instance.new("Frame", Screen)
-	local TextBox = Instance.new("TextBox", TextBar)
+	local ButtonClipper = Instance.new("Frame")
+	local Button = Instance.new("TextButton")
+	local TextBar = Instance.new("Frame")
+	local TextBox = Instance.new("TextBox")
 
 	-- Chat Display
-	local Scroller = Instance.new("ScrollingFrame", Screen)
+	local Scroller = Instance.new("ScrollingFrame")
 
 	ButtonClipper.BackgroundTransparency = 1
 	ButtonClipper.ClipsDescendants = true
@@ -162,6 +159,7 @@ if isClient then
 	ButtonClipper.Position = BarPosition
 	ButtonClipper.Size = BarSize
 	ButtonClipper.ZIndex = 9
+	ButtonClipper.Parent = Screen
 
 	Button.BackgroundTransparency = 1
 	Button.Font = Font
@@ -175,14 +173,16 @@ if isClient then
 	Button.TextXAlignment = Enum.TextXAlignment.Left
 	Button.TextYAlignment = Enum.TextYAlignment.Center
 	Button.ZIndex = 10
+	Button.Parent = ButtonClipper
 
 	TextBar.BackgroundColor3 = Color3.new(0, 0, 0)
-	TextBar.BackgroundTransparency = .5
+	TextBar.BackgroundTransparency = 0.5
 	TextBar.BorderSizePixel = 0
 	TextBar.Name = "TextBar"
 	TextBar.Position = ClosedTextBarPos
 	TextBar.Size = BarSize
 	TextBar.ZIndex = 9
+	TextBar.Parent = Screen
 
 	TextBox.BackgroundTransparency = 1
 	TextBox.Font = Font
@@ -197,6 +197,7 @@ if isClient then
 	TextBox.TextXAlignment = Enum.TextXAlignment.Left
 	TextBox.TextYAlignment = Enum.TextYAlignment.Center
 	TextBox.ZIndex = 10
+	TextBox.Parent = TextBar
 
 	Scroller.BackgroundTransparency = 1
 	Scroller.Position = UDim2.new(0, 8, 0, 8)
@@ -204,15 +205,11 @@ if isClient then
 	Scroller.ScrollingEnabled = false
 	Scroller.Size = UDim2.new(0, 400, 0, 140)
 	Scroller.ZIndex = 10
+	Scroller.Parent = Screen
 
 	-- Optimizations
 	local OpenTextBarPos = UDim2.new(0, 0, 1, -30)
 	local ClosedBarSize = UDim2.new(BarSize.X.Scale, BarSize.X.Offset, 0, 0)
-
-	local byte = string.byte
-	local find = string.find
-	local gsub = string.gsub
-	local upper = string.upper
 
 	local CaptureFocus = TextBox.CaptureFocus
 	local FireServer = RavenChat.FireServer
@@ -222,34 +219,27 @@ if isClient then
 	-- Module Data
 	local Text = ""
 	local SwitchTexts = {
-		["/sc"] = "ROOT";
-		[" "] = true;
-		[""] = true;
+		["/sc"] = "ROOT",
+		[" "] = true,
+		[""] = true
 	}
-	local ChatKeys = {
-		Slash = true;
-		Return = true;
-	}
+	local ChatKeys = { Slash = true, Return = true }
 
 	local ChatColors = {
-		Color3.fromRGB(255, 119, 119); Color3.fromRGB(131, 255, 251);
-		Color3.fromRGB(96,  255, 162); Color3.fromRGB(255, 138, 255);
-		Color3.fromRGB(255, 175, 151); Color3.fromRGB(255, 255, 150);
-		Color3.fromRGB(255, 218, 255); Color3.fromRGB(227, 216, 197);
-		Color3.fromRGB(0, 215, 136);
+		Color3.fromRGB(255, 119, 119), Color3.fromRGB(131, 255, 251),
+		Color3.fromRGB(96,  255, 162), Color3.fromRGB(255, 138, 255),
+		Color3.fromRGB(255, 175, 151), Color3.fromRGB(255, 255, 150),
+		Color3.fromRGB(255, 218, 255), Color3.fromRGB(227, 216, 197),
+		Color3.fromRGB(0, 215, 136),
 
-		System = Color3.fromRGB(234, 223, 204);
+		System = Color3.fromRGB(234, 223, 204)
 	}
 
 	local ModeratorColor = Color3.fromRGB(255, 223, 94)
 
-	local Moderators = {
-		142762267
-	}
+	local Moderators = { 142762267 }
 
-	local CustomColors = {
-		[16826035] = Color3.fromRGB(255, 180, 252)
-	}
+	local CustomColors = { [16826035] = Color3.fromRGB(255, 180, 252) }
 
 	function ChatColors:__index(PlayerString)
 		--- Gets a chat color and indexes it if one doesn't exist
@@ -257,7 +247,7 @@ if isClient then
 		if Player then
 			local userId, Name = Player.UserId, Player.Name
 
-			for id, Color in next, CustomColors do
+			for id, Color in pairs(CustomColors) do
 				if id == userId then
 					self[Player] = Color
 					return Color
@@ -273,7 +263,8 @@ if isClient then
 
 			local length = #Name
 			for letter = 1, length do
-				local CharacterValue = byte(Name, letter)
+				local CharacterValue = Name:byte(letter)
+			--	local CharacterValue = byte(Name, letter)
 				local ReverseIndex = length - letter + (length % 2 == 1 and 1 or 0)
 
 				if ReverseIndex % 4 >= 2 then
@@ -360,8 +351,8 @@ if isClient then
 			PlayerName = Name
 			return ""
 		end
-
-		local Text, UseTeamColor = gsub(gsub(gsub(Text, "%s+", " "), "^/w (%w+)", GetName), "^%%", "")
+		local Text, UseTeamColor = ((Text:gsub("%s+", " ")):gsub("^/w (%w+)", GetName)):gsub("^%%", "")
+	--	local Text, UseTeamColor = gsub(gsub(gsub(Text, "%s+", " "), "^/w (%w+)", GetName), "^%%", "")
 		Text = SwitchTexts[Text] or Text
 
 		if UseTeamColor > 0 then
@@ -387,7 +378,7 @@ if isClient then
 
 	local MessageYOffset = 140
 	local Tweenable = true
-	local FadeTime = .25
+	local FadeTime = 0.25
 	local MessageNumber = 0
 	local function MessageDisplay(Chatter, Message, Private, TeamColor)
 		-- @param string Chatter Name of Player who is chatting
@@ -398,7 +389,7 @@ if isClient then
 		MessageNumber = MessageNumber + 1
 		Scroller.CanvasSize = UDim2.new(0, 0, 0, MessageYOffset + 20)
 
-		local NameText = Instance.new("TextLabel", Scroller)
+		local NameText = Instance.new("TextLabel")
 		NameText.BackgroundTransparency = 1
 		NameText.Font = Font
 		NameText.Name = MessageNumber
@@ -409,8 +400,9 @@ if isClient then
 		NameText.TextSize = FontSize
 		NameText.TextStrokeTransparency = 0.5
 		NameText.TextXAlignment = Enum.TextXAlignment.Left
+		NameText.Parent = Scroller
 
-		local MessageText = Instance.new("TextLabel", NameText)
+		local MessageText = Instance.new("TextLabel")
 		MessageText.BackgroundTransparency = 1
 		MessageText.Font = Font
 		MessageText.Position = UDim2.new(0, NameText.TextBounds.X, 0, 0)
@@ -420,6 +412,7 @@ if isClient then
 		MessageText.TextSize = FontSize
 		MessageText.TextStrokeTransparency = 0.7
 		MessageText.TextXAlignment = Enum.TextXAlignment.Left
+		MessageText.Parent = NameText
 
 
 		if Tweenable then
@@ -428,7 +421,7 @@ if isClient then
 			local Accumulated = Vector2.new(0, 0)
 
 			Tween.new(FadeTime, "OutQuad", function(ratio)
-				local Change = Vector2.new(0, CanvasPositionY + ratio*20) - StartPosition
+				local Change = Vector2.new(0, CanvasPositionY + ratio * 20) - StartPosition
 				Scroller.CanvasPosition = Scroller.CanvasPosition + Change - Accumulated
 				Accumulated = Change
 			end)
@@ -443,10 +436,8 @@ if isClient then
 			end
 		end
 	end
-
 	Screen.Name = "RavenChat"
 	Screen.Parent = PlayerGui
-
 	RavenChat.OnClientEvent:Connect(MessageDisplay)
 	Players.PlayerRemoving:Connect(function(Player)
 		wait(10) -- Just chill to make sure that any of their messages have finished sending
