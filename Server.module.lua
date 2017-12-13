@@ -16,18 +16,18 @@ local RavenChat = Retrieve:Event("RavenChat")
 
 -- Module Data
 local JoinOptions = {
-	" joined";
-	" entered";
-	" has arrived";
-	" showed up!";
-	" has entered the building!";
-	" in the house!";
-	" is here :D";
+	" joined",
+	" entered",
+	" has arrived",
+	" showed up!",
+	" has entered the building!",
+	" in the house!",
+	" is here :D"
 }
 
 -- Optimizations
 local NumJoinOptions = #JoinOptions
-local random = math.random
+local math = math local random = math.random
 local FireClient = RavenChat.FireClient
 local FireAllClients = RavenChat.FireAllClients
 local FilterStringAsync = not SoloTestMode and GameChat.FilterStringAsync or function(_, a) return a end
